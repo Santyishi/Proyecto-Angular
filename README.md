@@ -1,10 +1,6 @@
 Este proyecto fue desarrollado como parte de la entrega final del curso de Angular.
 La aplicación permite gestionar alumnos y cursos mediante componentes de Angular, utilizando Angular CLI, Angular Material y Formularios Reactivos.
-<<<<<<< HEAD
-🚀 Funcionalidades principales
-=======
-  Funcionalidades principales
->>>>>>> 13bbdd6e95024cf9c98b8dadc2c27757355837f1
+ Funcionalidades principales
 
     Gestión de Alumnos:
 
@@ -22,11 +18,7 @@ La aplicación permite gestionar alumnos y cursos mediante componentes de Angula
 
         Listado de alumnos mediante tablas dinámicas con datos provenientes de arrays en TypeScript.
 
-<<<<<<< HEAD
  Tecnologías utilizadas
-=======
-  Tecnologías utilizadas
->>>>>>> 13bbdd6e95024cf9c98b8dadc2c27757355837f1
 
     Angular CLI
 
