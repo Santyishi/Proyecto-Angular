@@ -5,18 +5,21 @@ import { HighlightDirective } from './directives/highlight.directive';
 import { MultiplyDirective } from './directives/multiply.directive';
 import { FontSizeDirective } from './directives/font-size.directive';
 
-
-
 @NgModule({
   declarations: [
-    FullNamePipe,
     HighlightDirective,
     MultiplyDirective,
     FontSizeDirective
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    FullNamePipe 
   ],
-  exports:[FullNamePipe,HighlightDirective, MultiplyDirective,FontSizeDirective]
+  exports: [
+    FullNamePipe, 
+    HighlightDirective,
+    MultiplyDirective,
+    FontSizeDirective
+  ]
 })
 export class HelpersModule { }

@@ -27,6 +27,5 @@ import { HelpersModule } from '../../../../Shared/helpers.module';
     HelpersModule,
     MatDialogModule
   ],
-  exports:[StudentsComponent]
 })
 export class StudentsModule { }

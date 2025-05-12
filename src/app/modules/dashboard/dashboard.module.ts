@@ -11,13 +11,13 @@ import { StudentsModule } from './pages/students/students.module';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { CoursesComponent } from './pages/courses/courses.component';
 
 
 @NgModule({
   declarations: [
     DashboardComponent,
     ToolbarComponent,
-    
   ],
   imports: [
     CommonModule,
