@@ -1,8 +1,12 @@
-
-// Custom Theming for Angular Material
-// For more information: https://material.angular.io/guide/theming
+// === Theming Angular Material ===
 @use '@angular/material' as mat;
+@use './custom-theme';
 
+
+// Importa los estilos base de Angular Material
+@include mat.core();
+
+// Aplica el tema personalizado
 html {
   @include mat.theme((
     color: (
@@ -13,7 +17,21 @@ html {
     typography: Roboto,
     density: 0,
   ));
-}/* You can add global styles to this file, and also import other style files */
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// === Reset y tipografía base ===
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: #f3f4f6;
+  color: #333;
+}
+
+button {
+  color: #4a148c !important; 
+}
+button:hover {
+  color: #fff !important;
+  background-color: #7e57c2 !important; 
+}

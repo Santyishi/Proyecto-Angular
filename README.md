@@ -1,61 +1,101 @@
-Este proyecto fue desarrollado como parte de la entrega final del curso de Angular.
-La aplicación permite gestionar alumnos y cursos mediante componentes de Angular, utilizando Angular CLI, Angular Material y Formularios Reactivos.
- Funcionalidades principales
 
-    Gestión de Alumnos:
+# Proyecto Angular - Gestión de Cursos
 
-        Alta, baja y modificación de alumnos usando Formularios Reactivos.
+Este proyecto fue desarrollado como parte de la **entrega final del curso de Angular en Coderhouse**.  
+La aplicación permite gestionar **alumnos, cursos e inscripciones** mediante componentes modulares, utilizando Angular CLI, Angular Material y Formularios Reactivos.
 
-        Visualización de alumnos en tablas dinámicas de Angular Material.
+---
 
-    Interfaz de Usuario:
+## ✅ Funcionalidades Principales
 
-        Navbar lateral y Toolbar superior para navegación fluida.
+### 🎓 Gestión de Alumnos, Cursos e Inscripciones
+- Altas, bajas y modificaciones usando formularios reactivos.
+- Visualización mediante tablas dinámicas de Angular Material.
 
-        Estilizado con Angular Material.
+### 🧭 Interfaz de Usuario
+- Navbar lateral y Toolbar superior para navegación fluida.
+- Estilizado limpio y responsive con Angular Material.
 
-    Estructuración de Datos:
+### 🧱 Estructuración del Código
+- Cada entidad está separada como un Feature Module.
+- Datos mockeados gestionados desde arrays en TypeScript.
 
-        Listado de alumnos mediante tablas dinámicas con datos provenientes de arrays en TypeScript.
+---
 
- Tecnologías utilizadas
+## 🛠️ Tecnologías utilizadas
 
-    Angular CLI
+- Angular CLI
+- Angular Material
+- TypeScript
+- Reactive Forms
+- HTML5 / SCSS
+- Routing con lazy loading
 
-    Angular Material
+---
 
-    TypeScript
+## 📁 Estructura del Proyecto
 
-    Reactive Forms
+```
+src/
+├── app/
+│   ├── core/
+│   ├── shared/
+│   ├── modules/
+│   │   └── dashboard/
+│   │       ├── pages/
+│   │       │   ├── students/
+│   │       │   ├── courses/
+│   │       │   └── enrollments/
+│   │       └── dashboard.component.*
+```
 
-    HTML5 / CSS3
+---
 
- Versión de Producción (dist/)
+## 🚀 Cómo ejecutar el proyecto
 
-La carpeta dist/ fue generada utilizando el comando:
+### Clonar el repositorio
 
-ng build --configuration production
-
-Debido a que dist/ está ignorado por defecto en .gitignore, se forzó su agregado manualmente al repositorio para cumplir con los requisitos de entrega.
-
-La versión de producción está disponible para revisión dentro del repositorio.
- Cómo ejecutar el proyecto
-Clonar el repositorio:
-
+```bash
 git clone https://github.com/Santyishi/Proyecto-Angular.git
 cd Proyecto-Angular
+```
 
-Instalar dependencias:
+### Instalar dependencias
 
+```bash
 npm install
+```
 
-Correr el proyecto en modo desarrollo:
+### Ejecutar en modo desarrollo
 
+```bash
 ng serve
+```
 
-Acceder desde: http://localhost:4200
-Estado del Proyecto:
+Acceder desde: [http://localhost:4200](http://localhost:4200)
 
-✔️ Proyecto completado cumpliendo con los requisitos funcionales y técnicos solicitados.
-✔️ Documentación disponible.
-✔️ Carpeta dist/ incluida para su revisión.
+---
+
+## 🏁 Versión de Producción (`dist/`)
+
+La carpeta `dist/` fue generada utilizando el comando:
+
+```bash
+ng build --configuration production
+```
+
+> ⚠️ Debido a que `dist/` está ignorado por defecto en `.gitignore`, se forzó su agregado manual al repositorio para cumplir con los requisitos de entrega.
+
+---
+
+## 📌 Estado del Proyecto
+
+✔️ Proyecto completado cumpliendo con los requisitos funcionales y técnicos solicitados.  
+✔️ Documentación incluida.  
+✔️ Carpeta `dist/` incluida para revisión.
+
+---
+
+## 🧑‍💻 Autor
+
+Proyecto realizado por **Santyishi** como entrega final del curso de Angular.
