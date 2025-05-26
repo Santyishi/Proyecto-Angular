@@ -1,24 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Enrollment } from './enrollments.service';
-import { generateRandomString } from '../../../../Shared/utils';
+import { EnrollmentsService, Enrollment } from './enrollments.service';
 
 @Component({
   selector: 'app-enrollments',
+  standalone: false,
   templateUrl: './enrollments.component.html',
-  styleUrls: ['./enrollments.component.scss'],
-  standalone: false
+  styleUrl: './enrollments.component.scss'
 })
-export class EnrollmentsComponent {
+export class EnrollmentsComponent implements OnInit {
   enrollmentForm: FormGroup;
+  displayedColumns: string[] = ['id', 'student', 'course', 'date', 'actions'];
   enrollmentsList: Enrollment[] = [];
-  enrollmentIdEdit: string | null = null;
-  displayedColumns: string[] = ['id', 'student', 'course', 'actions'];
+  IdEnrollmentEdit?: string | null = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private enrollmentsService: EnrollmentsService
+  ) {
     this.enrollmentForm = this.fb.group({
       student: [null, Validators.required],
       course: [null, Validators.required],
+      date: [null, Validators.required]
     });
   }
 
@@ -27,10 +30,9 @@ export class EnrollmentsComponent {
   }
 
   loadEnrollments(): void {
-    this.enrollmentsList = [
-      { id: 'e1', student: 'Juan Pérez', course: 'Angular Básico' },
-      { id: 'e2', student: 'María Gómez', course: 'TypeScript Avanzado' }
-    ];
+    this.enrollmentsService.getEnrollments().subscribe(data => {
+      this.enrollmentsList = [...data];
+    });
   }
 
   onSubmit(): void {
@@ -41,39 +43,104 @@ export class EnrollmentsComponent {
 
     const formValue = this.enrollmentForm.value;
 
-    if (this.enrollmentIdEdit) {
-      this.enrollmentsList = this.enrollmentsList.map(e =>
-        e.id === this.enrollmentIdEdit ? { id: this.enrollmentIdEdit!, ...formValue } : e
-      );
-      this.enrollmentIdEdit = null;
-    } else {
-      const newEnrollment: Enrollment = {
-        id: generateRandomString(6),
+    if (this.IdEnrollmentEdit) {
+      const updated: Enrollment = {
+        id: this.IdEnrollmentEdit,
         ...formValue
       };
-      this.enrollmentsList = [...this.enrollmentsList, newEnrollment];
+      this.enrollmentsService.updateEnrollment(updated).subscribe(() => {
+        this.loadEnrollments();
+        this.IdEnrollmentEdit = null;
+        this.resetForm();
+      });
+    } else {
+      const newEnrollment: Enrollment = {
+        id: this.generateSequentialEnrollmentId(),
+        ...formValue
+      };
+      this.enrollmentsService.addEnrollment(newEnrollment).subscribe(() => {
+        this.loadEnrollments();
+        this.resetForm();
+      });
     }
-
-    this.resetForm();
   }
 
   onDelete(id: string): void {
-    if (confirm("¿Eliminar inscripción?")) {
-      this.enrollmentsList = this.enrollmentsList.filter(e => e.id !== id);
+    if (confirm("¿Seguro que deseas eliminar la inscripción?")) {
+      this.enrollmentsService.deleteEnrollment(id).subscribe(() => {
+        this.loadEnrollments();
+      });
     }
   }
 
   onEdit(enrollment: Enrollment): void {
-    this.enrollmentIdEdit = enrollment.id;
-    this.enrollmentForm.patchValue(enrollment);
+    this.IdEnrollmentEdit = enrollment.id;
+    this.enrollmentForm.patchValue({
+      student: enrollment.student,
+      course: enrollment.course,
+      date: enrollment.date,
+    });
   }
 
   resetForm(): void {
-    this.enrollmentForm.reset({ student: null, course: null });
-    Object.values(this.enrollmentForm.controls).forEach(control => {
-      control.setErrors(null);
-      control.markAsPristine();
-      control.markAsUntouched();
+    this.enrollmentForm.reset();
+    this.enrollmentForm.markAsPristine();
+    this.enrollmentForm.markAsUntouched();
+  }
+
+  generateSequentialEnrollmentId(): string {
+    const existingIds = this.enrollmentsList
+      .map(e => e.id)
+      .filter(id => /^[a-z]+[0-9]+$/i.test(id));
+
+    const getLastIdParts = (id: string) => {
+      const match = id.match(/^([a-z]+)(\d+)$/i);
+      if (!match) return { prefix: 'e', number: 0 };
+      return {
+        prefix: match[1],
+        number: parseInt(match[2], 10)
+      };
+    };
+
+    let maxPrefix = 'e';
+    let maxNumber = 0;
+
+    existingIds.forEach(id => {
+      const { prefix, number } = getLastIdParts(id);
+      if (
+        prefix.length > maxPrefix.length ||
+        (prefix.length === maxPrefix.length && prefix > maxPrefix) ||
+        (prefix === maxPrefix && number > maxNumber)
+      ) {
+        maxPrefix = prefix;
+        maxNumber = number;
+      }
     });
+
+    if (maxNumber >= 10) {
+      maxPrefix = this.nextPrefix(maxPrefix);
+      maxNumber = 1;
+    } else {
+      maxNumber += 1;
+    }
+
+    return `${maxPrefix}${maxNumber}`;
+  }
+
+  nextPrefix(prefix: string): string {
+    const chars = prefix.split('');
+    let i = chars.length - 1;
+
+    while (i >= 0) {
+      if (chars[i] !== 'z') {
+        chars[i] = String.fromCharCode(chars[i].charCodeAt(0) + 1);
+        return chars.join('');
+      } else {
+        chars[i] = 'a';
+        i--;
+      }
+    }
+
+    return 'a' + chars.join('');
   }
 }

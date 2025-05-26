@@ -1,1 +1,16 @@
-<p>login works!</p>
+<h1>Iniciar sesión</h1>
+<form (ngSubmit)="onLogin()">
+  <mat-form-field appearance="fill">
+    <mat-label>Usuario</mat-label>
+    <input matInput [(ngModel)]="username" name="username" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Contraseña</mat-label>
+    <input matInput [(ngModel)]="password" name="password" type="password" required />
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit">Entrar</button>
+
+  <div *ngIf="error" style="color: red; margin-top: 10px;">Credenciales inválidas</div>
+</form>
