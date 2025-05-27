@@ -1,6 +1,6 @@
-
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 export interface Student {
   id: string;
@@ -15,48 +15,23 @@ export interface Student {
   providedIn: 'root'
 })
 export class StudentsService {
-  private students: Student[] = [
-    {
-      id: 'abc123',
-      name: 'Juan',
-      lastName: 'Pérez',
-      age: 22,
-      email: 'juan.perez@mail.com',
-      phone: 12345678
-    },
-    {
-      id: 'def456',
-      name: 'María',
-      lastName: 'Gómez',
-      age: 24,
-      email: 'maria.gomez@mail.com',
-      phone: 87654321
-    }
-  ];
+  private baseUrl = 'http://localhost:3000/students';
+
+  constructor(private http: HttpClient) {}
 
   getStudents(): Observable<Student[]> {
-    return of(this.students);
+    return this.http.get<Student[]>(this.baseUrl);
   }
 
-  addStudent(student: Student): Observable<Student[]> {
-    this.students.push(student);
-    return of(this.students);
+  addStudent(student: Student): Observable<Student> {
+    return this.http.post<Student>(this.baseUrl, student);
   }
 
-updateStudent(updated: Student): Observable<Student[]> {
-  console.log('Buscando ID:', updated.id); // 👀
-  const index = this.students.findIndex(s => s.id === updated.id);
-  console.log('Índice encontrado:', index); // 👀
-
-  if (index !== -1) {
-    this.students[index] = updated;
+  updateStudent(student: Student): Observable<Student> {
+    return this.http.put<Student>(`${this.baseUrl}/${student.id}`, student);
   }
 
-  return of(this.students);
-}
-
-  deleteStudent(id: string): Observable<Student[]> {
-    this.students = this.students.filter(s => s.id !== id);
-    return of(this.students);
+  deleteStudent(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

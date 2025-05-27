@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Student } from './students.service';
-import { generateRandomString } from '../../../../Shared/utils';
+import { Student, StudentsService } from './students.service';
 import { MatDialog } from '@angular/material/dialog';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-students',
@@ -11,7 +11,6 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrl: './students.component.scss'
 })
 export class StudentsComponent implements OnInit {
-
   studentForm: FormGroup;
   displayedColumns: string[] = ['id', 'name', 'lastName', 'age', 'email', 'phone', 'actions'];
   studentsList: Student[] = [];
@@ -19,7 +18,9 @@ export class StudentsComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private studentsService: StudentsService,
+    private auth: AuthService
   ) {
     this.studentForm = this.fb.group({
       name: [null, Validators.required],
@@ -35,27 +36,14 @@ export class StudentsComponent implements OnInit {
   }
 
   loadStudents(): void {
-    this.studentsList = [
-      {
-        id: 'abc123',
-        name: 'Juan',
-        lastName: 'Pérez',
-        age: 22,
-        email: 'juan.perez@mail.com',
-        phone: 12345678
-      },
-      {
-        id: 'def456',
-        name: 'María',
-        lastName: 'Gómez',
-        age: 24,
-        email: 'maria.gomez@mail.com',
-        phone: 87654321
-      }
-    ];
+    this.studentsService.getStudents().subscribe(data => {
+      this.studentsList = data;
+    });
   }
 
   onSubmit(): void {
+    if (!this.isAdmin()) return;
+
     if (this.studentForm.invalid) {
       this.studentForm.markAllAsTouched();
       return;
@@ -69,30 +57,37 @@ export class StudentsComponent implements OnInit {
         ...formValue
       };
 
-      this.studentsList = this.studentsList.map((student) =>
-        student.id === this.IdStudentEdit ? updated : student
-      );
-
-      this.IdStudentEdit = null;
-      this.resetForm();
+      this.studentsService.updateStudent(updated).subscribe(() => {
+        this.loadStudents();
+        this.IdStudentEdit = null;
+        this.resetForm();
+      });
     } else {
       const newStudent: Student = {
-        id: generateRandomString(6),
+        id: crypto.randomUUID(),
         ...formValue
       };
 
-      this.studentsList = [...this.studentsList, newStudent];
-      this.resetForm();
+      this.studentsService.addStudent(newStudent).subscribe(() => {
+        this.loadStudents();
+        this.resetForm();
+      });
     }
   }
 
   onDelete(id: string): void {
+    if (!this.isAdmin()) return;
+
     if (confirm("¿Seguro que deseas eliminar el estudiante?")) {
-      this.studentsList = this.studentsList.filter(s => s.id !== id);
+      this.studentsService.deleteStudent(id).subscribe(() => {
+        this.loadStudents();
+      });
     }
   }
 
   onEdit(student: Student): void {
+    if (!this.isAdmin()) return;
+
     this.IdStudentEdit = student.id;
     this.studentForm.patchValue({
       name: student.name,
@@ -104,18 +99,22 @@ export class StudentsComponent implements OnInit {
   }
 
   resetForm(): void {
-  this.studentForm.reset({
-    name: null,
-    lastName: null,
-    age: null,
-    email: null,
-    phone: null
-  });
+    this.studentForm.reset({
+      name: null,
+      lastName: null,
+      age: null,
+      email: null,
+      phone: null
+    });
 
-  Object.values(this.studentForm.controls).forEach(control => {
-    control.setErrors(null);          // ← Borra errores manuales
-    control.markAsPristine();
-    control.markAsUntouched();
-  });
-}
+    Object.values(this.studentForm.controls).forEach(control => {
+      control.setErrors(null);
+      control.markAsPristine();
+      control.markAsUntouched();
+    });
+  }
+
+  isAdmin(): boolean {
+    return this.auth.getRole() === 'admin';
+  }
 }

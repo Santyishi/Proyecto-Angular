@@ -12,7 +12,6 @@ export class EnrollmentsComponent implements OnInit {
   enrollmentForm: FormGroup;
   displayedColumns: string[] = ['id', 'student', 'course', 'date', 'actions'];
   enrollmentsList: Enrollment[] = [];
-  IdEnrollmentEdit?: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -31,7 +30,7 @@ export class EnrollmentsComponent implements OnInit {
 
   loadEnrollments(): void {
     this.enrollmentsService.getEnrollments().subscribe(data => {
-      this.enrollmentsList = [...data];
+      this.enrollmentsList = data;
     });
   }
 
@@ -41,28 +40,15 @@ export class EnrollmentsComponent implements OnInit {
       return;
     }
 
-    const formValue = this.enrollmentForm.value;
+    const newEnrollment: Enrollment = {
+      id: this.generateSequentialEnrollmentId(),
+      ...this.enrollmentForm.value
+    };
 
-    if (this.IdEnrollmentEdit) {
-      const updated: Enrollment = {
-        id: this.IdEnrollmentEdit,
-        ...formValue
-      };
-      this.enrollmentsService.updateEnrollment(updated).subscribe(() => {
-        this.loadEnrollments();
-        this.IdEnrollmentEdit = null;
-        this.resetForm();
-      });
-    } else {
-      const newEnrollment: Enrollment = {
-        id: this.generateSequentialEnrollmentId(),
-        ...formValue
-      };
-      this.enrollmentsService.addEnrollment(newEnrollment).subscribe(() => {
-        this.loadEnrollments();
-        this.resetForm();
-      });
-    }
+    this.enrollmentsService.addEnrollment(newEnrollment).subscribe(() => {
+      this.loadEnrollments();
+      this.resetForm();
+    });
   }
 
   onDelete(id: string): void {
@@ -71,15 +57,6 @@ export class EnrollmentsComponent implements OnInit {
         this.loadEnrollments();
       });
     }
-  }
-
-  onEdit(enrollment: Enrollment): void {
-    this.IdEnrollmentEdit = enrollment.id;
-    this.enrollmentForm.patchValue({
-      student: enrollment.student,
-      course: enrollment.course,
-      date: enrollment.date,
-    });
   }
 
   resetForm(): void {

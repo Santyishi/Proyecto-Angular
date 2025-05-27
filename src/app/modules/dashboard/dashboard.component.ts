@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from '../../../app/core/services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,4 +9,10 @@ import { Component } from '@angular/core';
 })
 export class DashboardComponent {
   showFiller = false;
+
+  constructor(private auth: AuthService) {}
+
+  isAdmin(): boolean {
+    return this.auth.getRole() === 'admin';
+  }
 }

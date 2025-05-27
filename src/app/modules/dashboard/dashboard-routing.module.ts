@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
-import { AdminGuard } from '../../../app/core/guards/admin.guard'
+import { RoleGuard } from '../../../app/core/guards/role.guard';
 
 const routes: Routes = [
   {
@@ -10,23 +10,24 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'enrollments', // ✅ Ahora apunta a una ruta accesible para ambos perfiles
+        redirectTo: 'enrollments',
         pathMatch: 'full'
       },
       {
         path: 'students',
-        canActivate: [AdminGuard],
+        canActivate: [RoleGuard(['admin'])],
         loadChildren: () =>
           import('./pages/students/students.module').then(m => m.StudentsModule)
       },
       {
         path: 'courses',
-        canActivate: [AdminGuard],
+        canActivate: [RoleGuard(['admin', 'user'])],
         loadChildren: () =>
           import('./pages/courses/courses.module').then(m => m.CoursesModule)
       },
       {
         path: 'enrollments',
+        canActivate: [RoleGuard(['admin', 'user'])],
         loadChildren: () =>
           import('./pages/enrollments/enrollments.module').then(m => m.EnrollmentsModule)
       }

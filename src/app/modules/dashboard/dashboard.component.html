@@ -2,15 +2,15 @@
   <mat-drawer #drawer class="example-sidenav" mode="side">
     <p>Menú</p>
 
-    <!-- Navegación -->
-    <button mat-button routerLink="/dashboard/students">Estudiantes</button>
+    <ng-container *ngIf="isAdmin()">
+      <button mat-button routerLink="/dashboard/students">Estudiantes</button>
+    </ng-container>
+
     <button mat-button routerLink="/dashboard/courses">Cursos</button>
     <button mat-button routerLink="/dashboard/enrollments">Inscripciones</button>
-
   </mat-drawer>
 
   <div class="example-sidenav-content">
-
     <app-toolbar (drawerToggle)="drawer.toggle()"></app-toolbar>
     <main>
       <router-outlet></router-outlet>

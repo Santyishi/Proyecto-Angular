@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CoursesService, Course } from './courses.service';
 import { MatDialog } from '@angular/material/dialog';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-courses',
@@ -18,7 +19,8 @@ export class CoursesComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private matDialog: MatDialog,
-    private coursesService: CoursesService
+    private coursesService: CoursesService,
+    private auth: AuthService
   ) {
     this.courseForm = this.fb.group({
       title: [null, Validators.required],
@@ -32,11 +34,13 @@ export class CoursesComponent implements OnInit {
 
   loadCourses(): void {
     this.coursesService.getCourses().subscribe(data => {
-      this.coursesList = [...data]; // fuerza redibujado
+      this.coursesList = [...data];
     });
   }
 
   onSubmit(): void {
+    if (!this.isAdmin()) return;
+
     if (this.courseForm.invalid) {
       this.courseForm.markAllAsTouched();
       return;
@@ -58,7 +62,7 @@ export class CoursesComponent implements OnInit {
       });
     } else {
       const newCourse: Course = {
-        id: this.generateSequentialId(), // ID como a1, a2...
+        id: this.generateSequentialId(),
         ...formValue
       };
       this.coursesService.addCourse(newCourse).subscribe(() => {
@@ -71,6 +75,7 @@ export class CoursesComponent implements OnInit {
   }
 
   onDelete(id: string): void {
+    if (!this.isAdmin()) return;
     if (confirm("¿Seguro que deseas eliminar el curso?")) {
       this.coursesService.deleteCourse(id).subscribe(() => {
         this.loadCourses();
@@ -79,6 +84,7 @@ export class CoursesComponent implements OnInit {
   }
 
   onEdit(course: Course): void {
+    if (!this.isAdmin()) return;
     this.IdCourseEdit = course.id;
     this.courseForm.patchValue({
       title: course.title,
@@ -86,62 +92,63 @@ export class CoursesComponent implements OnInit {
     });
   }
 
-generateSequentialId(): string {
-  const existingIds = this.coursesList
-    .map(c => c.id)
-    .filter(id => /^[a-z]+[0-9]+$/i.test(id));
+  generateSequentialId(): string {
+    const existingIds = this.coursesList
+      .map(c => c.id)
+      .filter(id => /^[a-z]+[0-9]+$/i.test(id));
 
-  const getLastIdParts = (id: string) => {
-    const match = id.match(/^([a-z]+)(\d+)$/i);
-    if (!match) return { prefix: 'a', number: 0 };
-    return {
-      prefix: match[1],
-      number: parseInt(match[2], 10)
+    const getLastIdParts = (id: string) => {
+      const match = id.match(/^([a-z]+)(\d+)$/i);
+      if (!match) return { prefix: 'a', number: 0 };
+      return {
+        prefix: match[1],
+        number: parseInt(match[2], 10)
+      };
     };
-  };
 
-  let maxPrefix = 'a';
-  let maxNumber = 0;
+    let maxPrefix = 'a';
+    let maxNumber = 0;
 
-  existingIds.forEach(id => {
-    const { prefix, number } = getLastIdParts(id);
-    if (
-      prefix.length > maxPrefix.length ||
-      (prefix.length === maxPrefix.length && prefix > maxPrefix) ||
-      (prefix === maxPrefix && number > maxNumber)
-    ) {
-      maxPrefix = prefix;
-      maxNumber = number;
-    }
-  });
+    existingIds.forEach(id => {
+      const { prefix, number } = getLastIdParts(id);
+      if (
+        prefix.length > maxPrefix.length ||
+        (prefix.length === maxPrefix.length && prefix > maxPrefix) ||
+        (prefix === maxPrefix && number > maxNumber)
+      ) {
+        maxPrefix = prefix;
+        maxNumber = number;
+      }
+    });
 
-  // Si el número llegó a 10, avanzamos al siguiente prefijo (como Excel)
-  if (maxNumber >= 10) {
-    maxPrefix = this.nextPrefix(maxPrefix);
-    maxNumber = 1;
-  } else {
-    maxNumber += 1;
-  }
-
-  return `${maxPrefix}${maxNumber}`;
-}
-
-// Helper para avanzar el prefijo tipo Excel: a → b → ... → z → aa → ab → ...
-nextPrefix(prefix: string): string {
-  const chars = prefix.split('');
-  let i = chars.length - 1;
-
-  while (i >= 0) {
-    if (chars[i] !== 'z') {
-      chars[i] = String.fromCharCode(chars[i].charCodeAt(0) + 1);
-      return chars.join('');
+    if (maxNumber >= 10) {
+      maxPrefix = this.nextPrefix(maxPrefix);
+      maxNumber = 1;
     } else {
-      chars[i] = 'a';
-      i--;
+      maxNumber += 1;
     }
+
+    return `${maxPrefix}${maxNumber}`;
   }
 
-  // Si todos eran 'z', agregamos una letra al principio
-  return 'a' + chars.join('');
-}
+  nextPrefix(prefix: string): string {
+    const chars = prefix.split('');
+    let i = chars.length - 1;
+
+    while (i >= 0) {
+      if (chars[i] !== 'z') {
+        chars[i] = String.fromCharCode(chars[i].charCodeAt(0) + 1);
+        return chars.join('');
+      } else {
+        chars[i] = 'a';
+        i--;
+      }
+    }
+
+    return 'a' + chars.join('');
+  }
+
+  isAdmin(): boolean {
+    return this.auth.getRole() === 'admin';
+  }
 }

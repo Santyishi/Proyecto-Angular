@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 export interface Course {
   id: string;
@@ -11,38 +12,23 @@ export interface Course {
   providedIn: 'root'
 })
 export class CoursesService {
-  private courses: Course[] = [
-    {
-      id: 'a1',
-      title: 'Angular Básico',
-      description: 'Curso introductorio de Angular'
-    },
-    {
-      id: 'a2',
-      title: 'React Pro',
-      description: 'Curso avanzado de React para desarrolladores'
-    }
-  ];
+  private apiUrl = 'http://localhost:3000/courses';
+
+  constructor(private http: HttpClient) {}
 
   getCourses(): Observable<Course[]> {
-    return of(this.courses);
+    return this.http.get<Course[]>(this.apiUrl);
   }
 
-  addCourse(course: Course): Observable<Course[]> {
-    this.courses.push(course);
-    return of(this.courses);
+  addCourse(course: Course): Observable<Course> {
+    return this.http.post<Course>(this.apiUrl, course);
   }
 
-  updateCourse(updated: Course): Observable<Course[]> {
-    const index = this.courses.findIndex(c => c.id === updated.id);
-    if (index !== -1) {
-      this.courses[index] = updated;
-    }
-    return of(this.courses);
+  updateCourse(course: Course): Observable<Course> {
+    return this.http.put<Course>(`${this.apiUrl}/${course.id}`, course);
   }
 
-  deleteCourse(id: string): Observable<Course[]> {
-    this.courses = this.courses.filter(c => c.id !== id);
-    return of(this.courses);
+  deleteCourse(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
