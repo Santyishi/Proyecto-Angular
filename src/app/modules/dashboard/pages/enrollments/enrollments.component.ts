@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EnrollmentsService, Enrollment } from './enrollments.service';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-enrollments',
@@ -12,10 +13,12 @@ export class EnrollmentsComponent implements OnInit {
   enrollmentForm: FormGroup;
   displayedColumns: string[] = ['id', 'student', 'course', 'date', 'actions'];
   enrollmentsList: Enrollment[] = [];
+  IdEnrollmentEdit?: string | null = null;
 
   constructor(
     private fb: FormBuilder,
-    private enrollmentsService: EnrollmentsService
+    private enrollmentsService: EnrollmentsService,
+    private auth: AuthService
   ) {
     this.enrollmentForm = this.fb.group({
       student: [null, Validators.required],
@@ -40,15 +43,28 @@ export class EnrollmentsComponent implements OnInit {
       return;
     }
 
-    const newEnrollment: Enrollment = {
-      id: this.generateSequentialEnrollmentId(),
-      ...this.enrollmentForm.value
-    };
+    const formValue = this.enrollmentForm.value;
 
-    this.enrollmentsService.addEnrollment(newEnrollment).subscribe(() => {
-      this.loadEnrollments();
-      this.resetForm();
-    });
+    if (this.IdEnrollmentEdit && this.isAdmin()) {
+      const updated: Enrollment = {
+        id: this.IdEnrollmentEdit,
+        ...formValue
+      };
+      this.enrollmentsService.updateEnrollment(updated).subscribe(() => {
+        this.loadEnrollments();
+        this.IdEnrollmentEdit = null;
+        this.resetForm();
+      });
+    } else {
+      const newEnrollment: Enrollment = {
+        id: this.generateSequentialEnrollmentId(),
+        ...formValue
+      };
+      this.enrollmentsService.addEnrollment(newEnrollment).subscribe(() => {
+        this.loadEnrollments();
+        this.resetForm();
+      });
+    }
   }
 
   onDelete(id: string): void {
@@ -59,10 +75,22 @@ export class EnrollmentsComponent implements OnInit {
     }
   }
 
+  onEdit(enrollment: Enrollment): void {
+    if (!this.isAdmin()) return;
+
+    this.IdEnrollmentEdit = enrollment.id;
+    this.enrollmentForm.patchValue({
+      student: enrollment.student,
+      course: enrollment.course,
+      date: enrollment.date,
+    });
+  }
+
   resetForm(): void {
     this.enrollmentForm.reset();
     this.enrollmentForm.markAsPristine();
     this.enrollmentForm.markAsUntouched();
+    this.IdEnrollmentEdit = null;
   }
 
   generateSequentialEnrollmentId(): string {
@@ -119,5 +147,9 @@ export class EnrollmentsComponent implements OnInit {
     }
 
     return 'a' + chars.join('');
+  }
+
+  isAdmin(): boolean {
+    return this.auth.getRole() === 'admin';
   }
 }

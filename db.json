@@ -27,6 +27,11 @@
       "id": "a2",
       "title": "React Pro",
       "description": "Curso avanzado de React"
+    },
+    {
+      "id": "a3",
+      "title": "nada",
+      "description": "menos"
     }
   ],
   "enrollments": [
