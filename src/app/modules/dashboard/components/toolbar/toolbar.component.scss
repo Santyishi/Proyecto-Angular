@@ -1,0 +1,42 @@
+.toolbar-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-left: 1rem;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.user-info {
+  font-weight: bold;
+  font-size: 16px;
+  color: #9575cd;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  mat-icon {
+    color: #9575cd;
+  }
+}
+.title-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 1rem;
+}
+
+.toolbar-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.toolbar-subtitle {
+  font-size: 0.9rem;
+  color: #aa94d2;
+  letter-spacing: 0.5px;
+}

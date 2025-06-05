@@ -47,5 +47,26 @@
       "course": "React Pro",
       "date": "2024-06-10"
     }
-  ]
+  ],
+"usuarios": [
+  {
+    "id": "1",
+    "name": "Santi",
+    "email": "santi@gmail.com",
+    "password": "123456",
+    "address": "Calle falsa 123",
+    "phone": "098765432",
+    "role": "admin"
+  },
+  {
+    "id": "2",
+    "name": "Laura",
+    "email": "laura@gmail.com",
+    "password": "abcdef",
+    "address": "Av. siempre viva 742",
+    "phone": "091234567",
+    "role": "user"
+  }
+]
+
 }

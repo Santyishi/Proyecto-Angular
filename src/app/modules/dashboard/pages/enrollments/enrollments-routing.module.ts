@@ -5,7 +5,8 @@ import { EnrollmentsComponent } from './enrollments.component';
 const routes: Routes = [
   {
     path: '',
-    component: EnrollmentsComponent
+    component: EnrollmentsComponent,
+    data: { title: 'Gestión de Inscripciones' }
   }
 ];
 

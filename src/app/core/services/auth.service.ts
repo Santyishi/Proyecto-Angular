@@ -1,35 +1,40 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of, map } from 'rxjs';
 
 export type UserRole = 'admin' | 'user';
+
+export interface Usuario {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
-  private userRoleSubject = new BehaviorSubject<UserRole | null>(null);
+  private isLoggedInSubject = new BehaviorSubject<boolean>(true);
+  private userSubject = new BehaviorSubject<Usuario | null>({
+    id: 'dev1',
+    name: 'Dev Temporal',
+    email: 'dev@mail.com',
+    password: '1234',
+    role: 'admin'
+  });
 
   constructor(private router: Router) {}
 
-  login(username: string, password: string): boolean {
-    // Simulación de login hardcodeado
-    if (username === 'admin' && password === 'admin') {
-      this.isLoggedInSubject.next(true);
-      this.userRoleSubject.next('admin');
-      return true;
-    } else if (username === 'user' && password === 'user') {
-      this.isLoggedInSubject.next(true);
-      this.userRoleSubject.next('user');
-      return true;
-    }
-    return false;
+  login(email: string, password: string): Observable<boolean> {
+    // Siempre retorna éxito con usuario dev temporal
+    return of(true);
   }
 
   logout(): void {
     this.isLoggedInSubject.next(false);
-    this.userRoleSubject.next(null);
+    this.userSubject.next(null);
     this.router.navigate(['/login']);
   }
 
@@ -38,14 +43,22 @@ export class AuthService {
   }
 
   getRole(): UserRole | null {
-    return this.userRoleSubject.value;
+    return this.userSubject.value?.role || null;
   }
 
   getRole$(): Observable<UserRole | null> {
-    return this.userRoleSubject.asObservable();
+    return this.userSubject.asObservable().pipe(map(user => user?.role || null));
   }
 
   isAdmin(): boolean {
     return this.getRole() === 'admin';
+  }
+
+  getUser(): Usuario | null {
+    return this.userSubject.value;
+  }
+
+  getUser$(): Observable<Usuario | null> {
+    return this.userSubject.asObservable();
   }
 }

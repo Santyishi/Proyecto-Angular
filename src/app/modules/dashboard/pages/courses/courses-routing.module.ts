@@ -5,9 +5,11 @@ import { CoursesComponent } from './courses.component';
 const routes: Routes = [
   {
     path: '',
-    component: CoursesComponent
+    component: CoursesComponent,
+    data: { title: 'Gestión de Cursos' }
   }
 ];
+
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

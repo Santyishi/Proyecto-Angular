@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { StudentsComponent } from './students.component';
+import { UsersComponent } from './users.component';
+import { AdminGuard } from '../../../../core/guards/admin.guard';
 
 const routes: Routes = [
   {
     path: '',
-    component: StudentsComponent,
-    data: { title: 'Gestión de Alumnos' }
+    component: UsersComponent,
+    canActivate: [AdminGuard]
   }
 ];
 
@@ -14,4 +15,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class StudentsRoutingModule {}
+export class UsersRoutingModule { }

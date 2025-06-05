@@ -1,8 +1,17 @@
-<mat-toolbar>
-    <button  (click)="drawerToggle.emit()"  mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
-      <mat-icon>menu</mat-icon>
-    </button>
-    <h1>YishiCode School</h1>
-    <span class="example-spacer"></span>
-   
-  </mat-toolbar>
+<mat-toolbar color="primary">
+  <button (click)="drawerToggle.emit()" mat-icon-button aria-label="Menú">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <div class="title-wrapper">
+    <h1 class="toolbar-title">YishiCode School</h1>
+    <small class="toolbar-subtitle">{{ currentTitle }}</small>
+  </div>
+
+  <span class="spacer"></span>
+
+  <span class="user-info" *ngIf="user$ | async as user">
+    <mat-icon>person</mat-icon>
+    {{ user.name }} ({{ user.role }})
+  </span>
+</mat-toolbar>
