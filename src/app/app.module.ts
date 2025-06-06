@@ -8,8 +8,11 @@ import { AuthModule } from './modules/auth/auth.module';
 import { HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-
+import { studentsReducer } from './state/students/students.reducer';
 import { authReducer } from './state/auth/auth.reducer'; 
+import { EffectsModule } from '@ngrx/effects';
+
+
 
 @NgModule({
   declarations: [
@@ -21,7 +24,8 @@ import { authReducer } from './state/auth/auth.reducer';
     DashboardModule,
     AuthModule,
     HttpClientModule,
-    StoreModule.forRoot({ auth: authReducer }), 
+    EffectsModule.forRoot([]),
+    StoreModule.forRoot({ auth: authReducer, students: studentsReducer, }), 
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() })
   ],
   providers: [

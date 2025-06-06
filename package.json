@@ -2,15 +2,14 @@
   "name": "PF-Olivera",
   "version": "0.0.0",
   "scripts": {
-  "ng": "ng",
-  "ng-serve": "ng serve",
-  "start": "npm-run-all --parallel json-server ng-serve",
-  "build": "ng build",
-  "watch": "ng build --watch --configuration development",
-  "test": "ng test",
-  "json-server": "json-server --watch db.json --port 3000"
-}
-,
+    "ng": "ng",
+    "ng-serve": "ng serve",
+    "start": "npm-run-all --parallel json-server ng-serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "json-server": "json-server --watch db.json --port 3000"
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "^19.0.0",
@@ -23,6 +22,7 @@
     "@angular/platform-browser": "^19.0.0",
     "@angular/platform-browser-dynamic": "^19.0.0",
     "@angular/router": "^19.0.0",
+    "@ngrx/effects": "^19.2.1",
     "@ngrx/store": "^19.2.1",
     "@ngrx/store-devtools": "^19.2.1",
     "bootstrap": "^5.3.3",

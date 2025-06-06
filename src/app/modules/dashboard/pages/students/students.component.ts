@@ -1,25 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Student, StudentsService } from './students.service';
-import { MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { Student } from '../students/models/index';
 import { AuthService } from '../../../../core/services/auth.service';
+import * as StudentsActions from '../../../../state/students/students.actions';
+import { selectAllStudents } from '../../../../state/students/students.selectors';
 
 @Component({
   selector: 'app-students',
-  standalone: false,
   templateUrl: './students.component.html',
-  styleUrl: './students.component.scss'
+  styleUrls: ['./students.component.scss'],
+  standalone: false
 })
 export class StudentsComponent implements OnInit {
   studentForm: FormGroup;
   displayedColumns: string[] = ['id', 'name', 'lastName', 'age', 'email', 'phone', 'actions'];
-  studentsList: Student[] = [];
+  students$: Observable<Student[]>;
   IdStudentEdit?: string | null = null;
 
   constructor(
     private fb: FormBuilder,
-    private matDialog: MatDialog,
-    private studentsService: StudentsService,
+    private store: Store,
     private auth: AuthService
   ) {
     this.studentForm = this.fb.group({
@@ -29,16 +31,12 @@ export class StudentsComponent implements OnInit {
       email: [null, [Validators.required, Validators.email]],
       phone: [null, Validators.required],
     });
+
+    this.students$ = this.store.select(selectAllStudents);
   }
 
   ngOnInit(): void {
-    this.loadStudents();
-  }
-
-  loadStudents(): void {
-    this.studentsService.getStudents().subscribe(data => {
-      this.studentsList = data;
-    });
+    this.store.dispatch(StudentsActions.loadStudents());
   }
 
   onSubmit(): void {
@@ -57,21 +55,16 @@ export class StudentsComponent implements OnInit {
         ...formValue
       };
 
-      this.studentsService.updateStudent(updated).subscribe(() => {
-        this.loadStudents();
-        this.IdStudentEdit = null;
-        this.resetForm();
-      });
+      this.IdStudentEdit = null;
+      this.resetForm();
     } else {
       const newStudent: Student = {
         id: crypto.randomUUID(),
         ...formValue
       };
 
-      this.studentsService.addStudent(newStudent).subscribe(() => {
-        this.loadStudents();
-        this.resetForm();
-      });
+      this.store.dispatch(StudentsActions.addStudent({ student: newStudent }));
+      this.resetForm();
     }
   }
 
@@ -79,9 +72,7 @@ export class StudentsComponent implements OnInit {
     if (!this.isAdmin()) return;
 
     if (confirm("¿Seguro que deseas eliminar el estudiante?")) {
-      this.studentsService.deleteStudent(id).subscribe(() => {
-        this.loadStudents();
-      });
+      this.store.dispatch(StudentsActions.deleteStudent({ id }));
     }
   }
 

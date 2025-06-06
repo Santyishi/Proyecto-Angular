@@ -12,6 +12,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CoursesComponent } from './pages/courses/courses.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { EffectsModule } from '@ngrx/effects';
+import { StudentsEffects } from '../../state/students/students.effects';
+
 
 
 @NgModule({
@@ -29,7 +33,9 @@ import { CoursesComponent } from './pages/courses/courses.component';
     MatDialogModule, 
     MatFormFieldModule, 
     MatInputModule, 
-    StudentsModule
+    StudentsModule,
+    MatMenuModule,
+    EffectsModule.forFeature([StudentsEffects])
   ],
   exports:[DashboardComponent]
 })

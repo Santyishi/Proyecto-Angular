@@ -40,3 +40,14 @@
   color: #aa94d2;
   letter-spacing: 0.5px;
 }
+.user-info.clickable {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #9575cd;
+
+  &:hover {
+    color: #7e57c2;
+  }
+}

@@ -10,8 +10,19 @@
 
   <span class="spacer"></span>
 
-  <span class="user-info" *ngIf="user$ | async as user">
+  <span
+    *ngIf="user$ | async as user"
+    [matMenuTriggerFor]="userMenu"
+    class="user-info clickable"
+  >
     <mat-icon>person</mat-icon>
     {{ user.name }} ({{ user.role }})
   </span>
+
+  <mat-menu #userMenu="matMenu">
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Cerrar sesión</span>
+    </button>
+  </mat-menu>
 </mat-toolbar>

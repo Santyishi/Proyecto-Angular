@@ -5,6 +5,7 @@ import { Usuario } from '../../../../core/services/auth.service';
 import { selectUser } from '../../../../state/auth/auth.selectors';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
+import { logoutUser } from '../../../../state/auth/auth.actions';
 
 @Component({
   selector: 'app-toolbar',
@@ -33,5 +34,9 @@ export class ToolbarComponent {
     ).subscribe(title => {
       this.currentTitle = title;
     });
+  }
+  logout(): void {
+  this.store.dispatch(logoutUser());
+  this.router.navigate(['/login']);
   }
 }

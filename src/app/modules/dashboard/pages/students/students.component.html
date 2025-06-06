@@ -61,7 +61,7 @@
 <div style="margin-top: 1rem; font-size: 0.9rem; color: #444;"></div>
 
 <div class="table-container">
-  <table mat-table [dataSource]="studentsList" class="mat-elevation-z12 custom-table">
+<table mat-table [dataSource]="(students$ | async) ?? []" class="mat-elevation-z12 custom-table">
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef> ID </th>
       <td mat-cell *matCellDef="let element"> {{element.id}} </td>
