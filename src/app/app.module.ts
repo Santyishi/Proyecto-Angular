@@ -11,6 +11,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { studentsReducer } from './state/students/students.reducer';
 import { authReducer } from './state/auth/auth.reducer'; 
 import { EffectsModule } from '@ngrx/effects';
+import { StudentsEffects } from './state/students/students.effects';
+
 
 
 
@@ -24,7 +26,7 @@ import { EffectsModule } from '@ngrx/effects';
     DashboardModule,
     AuthModule,
     HttpClientModule,
-    EffectsModule.forRoot([]),
+    EffectsModule.forRoot([StudentsEffects]),
     StoreModule.forRoot({ auth: authReducer, students: studentsReducer, }), 
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() })
   ],

@@ -13,8 +13,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CoursesComponent } from './pages/courses/courses.component';
 import { MatMenuModule } from '@angular/material/menu';
-import { EffectsModule } from '@ngrx/effects';
-import { StudentsEffects } from '../../state/students/students.effects';
 
 
 
@@ -35,7 +33,6 @@ import { StudentsEffects } from '../../state/students/students.effects';
     MatInputModule, 
     StudentsModule,
     MatMenuModule,
-    EffectsModule.forFeature([StudentsEffects])
   ],
   exports:[DashboardComponent]
 })

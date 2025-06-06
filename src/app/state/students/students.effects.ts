@@ -13,7 +13,7 @@ export class StudentsEffects {
     
   ) 
   {
-    console.log('✅ actions$', this.actions$); // 👈 esto te muestra si se inyectó bien
+    console.log('✅ StudentsEffects instanciado');
   }
 
   loadStudents$ = createEffect(() =>

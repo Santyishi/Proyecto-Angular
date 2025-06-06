@@ -10,10 +10,7 @@ import { StudentsRoutingModule } from './students-routing.module';
 import { StudentsComponent } from './students.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HelpersModule } from '../../../../Shared/helpers.module';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { studentsReducer } from '../../../../state/students/students.reducer';
-import { StudentsEffects } from '../../../../state/students/students.effects';
+
 
 
 
@@ -30,8 +27,6 @@ import { StudentsEffects } from '../../../../state/students/students.effects';
     MatTableModule,
     HelpersModule,
     MatDialogModule,
-    EffectsModule.forFeature([StudentsEffects]),
-    StoreModule.forFeature('students', studentsReducer),
   ],
 })
 export class StudentsModule {}
