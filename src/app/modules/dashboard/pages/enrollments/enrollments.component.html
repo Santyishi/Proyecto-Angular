@@ -1,24 +1,28 @@
 <h1 class="centered-title">Inscripciones</h1>
 
-<form (ngSubmit)="onSubmit()" [formGroup]="enrollmentForm" class="form-container">
+<form [formGroup]="enrollmentForm" (ngSubmit)="onSubmit()" class="form-container">
   <div class="grid">
     <div class="col-4">
       <mat-form-field class="w-full" appearance="fill">
         <mat-label>Estudiante</mat-label>
-        <input matInput formControlName="student" />
-        <mat-error *ngIf="enrollmentForm.get('student')?.touched && enrollmentForm.get('student')?.invalid">
-          El nombre del estudiante es requerido
-        </mat-error>
+        <mat-select formControlName="studentId">
+          <mat-option *ngFor="let student of studentsList" [value]="student.id">
+            {{ student.name }} {{ student.lastName }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="enrollmentForm.get('studentId')?.invalid">Campo requerido</mat-error>
       </mat-form-field>
     </div>
 
     <div class="col-4">
       <mat-form-field class="w-full" appearance="fill">
         <mat-label>Curso</mat-label>
-        <input matInput formControlName="course" />
-        <mat-error *ngIf="enrollmentForm.get('course')?.touched && enrollmentForm.get('course')?.invalid">
-          El nombre del curso es requerido
-        </mat-error>
+        <mat-select formControlName="courseId">
+          <mat-option *ngFor="let course of coursesList" [value]="course.id">
+            {{ course.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="enrollmentForm.get('courseId')?.invalid">Campo requerido</mat-error>
       </mat-form-field>
     </div>
 
@@ -26,15 +30,13 @@
       <mat-form-field class="w-full" appearance="fill">
         <mat-label>Fecha</mat-label>
         <input matInput type="date" formControlName="date" />
-        <mat-error *ngIf="enrollmentForm.get('date')?.touched && enrollmentForm.get('date')?.invalid">
-          La fecha es requerida
-        </mat-error>
+        <mat-error *ngIf="enrollmentForm.get('date')?.invalid">Campo requerido</mat-error>
       </mat-form-field>
     </div>
   </div>
 
   <div class="form-actions text-center">
-    <button type="submit" mat-raised-button color="primary">Guardar</button>
+    <button mat-raised-button color="primary" type="submit">Guardar</button>
   </div>
 </form>
 
@@ -50,12 +52,12 @@
 
     <ng-container matColumnDef="student">
       <th mat-header-cell *matHeaderCellDef> Estudiante </th>
-      <td mat-cell *matCellDef="let enrollment"> {{ enrollment.student }} </td>
+      <td mat-cell *matCellDef="let enrollment"> {{ enrollment.studentName }} </td>
     </ng-container>
 
     <ng-container matColumnDef="course">
       <th mat-header-cell *matHeaderCellDef> Curso </th>
-      <td mat-cell *matCellDef="let enrollment"> {{ enrollment.course }} </td>
+      <td mat-cell *matCellDef="let enrollment"> {{ enrollment.courseName }} </td>
     </ng-container>
 
     <ng-container matColumnDef="date">

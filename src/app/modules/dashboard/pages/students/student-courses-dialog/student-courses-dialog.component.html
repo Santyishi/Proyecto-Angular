@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>Cursos del Alumno</h1>
+
+<div mat-dialog-content style="max-height: 300px; overflow-y: auto; padding: 8px;">
+  <ul *ngIf="courses.length > 0; else noCursos">
+    <li *ngFor="let course of courses" style="margin-bottom: 8px; font-size: 16px;">
+      {{ course.name }} ({{ course.teacher }})
+    </li>
+  </ul>
+  <ng-template #noCursos>
+    <p>Este alumno no está inscrito en ningún curso.</p>
+  </ng-template>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cerrar</button>
+</div>

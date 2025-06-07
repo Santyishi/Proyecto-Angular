@@ -1,72 +1,137 @@
 {
   "students": [
     {
-      "id": "abc123",
+      "id": "s1",
       "name": "Juan",
       "lastName": "Pérez",
       "age": 22,
-      "email": "juan.perez@mail.com",
+      "email": "juan.perez@mail.co",
       "phone": 12345678
     },
     {
-      "id": "def456",
-      "name": "María",
-      "lastName": "Gómez",
-      "age": 24,
-      "email": "maria.gomez@mail.com",
-      "phone": 87654321
+      "id": "s3",
+      "name": "Lucas",
+      "lastName": "Fernández",
+      "age": 21,
+      "email": "lucas.fernandez@mail.com",
+      "phone": 11223344
+    },
+    {
+      "id": "s4",
+      "name": "Sofía",
+      "lastName": "Rodríguez",
+      "age": 23,
+      "email": "sofia.rodriguez@mail.com",
+      "phone": 55667788
+    },
+    {
+      "id": "s5",
+      "name": "Carlos",
+      "lastName": "Martínez",
+      "age": 25,
+      "email": "carlos.martinez@mail.com",
+      "phone": 99887766
     }
   ],
   "courses": [
     {
-      "id": "a1",
-      "title": "Angular Básico",
-      "description": "Curso introductorio a Angular"
+      "id": "c1",
+      "name": "Angular Básico",
+      "teacher": "Prof. López",
+      "hours": 40,
+      "classes": 10
     },
     {
-      "id": "a2",
-      "title": "React Pro",
-      "description": "Curso avanzado de React"
+      "id": "c2",
+      "name": "React Pro",
+      "teacher": "Prof. Martínez",
+      "hours": 60,
+      "classes": 15
     },
     {
-      "id": "a3",
-      "title": "nada",
-      "description": "menos"
+      "id": "c3",
+      "name": "Node Avanzado",
+      "teacher": "Prof. Ruiz",
+      "hours": 50,
+      "classes": 12
+    },
+    {
+      "id": "c4",
+      "name": "Vue desde Cero",
+      "teacher": "Prof. García",
+      "hours": 30,
+      "classes": 8
+    },
+    {
+      "id": "c5",
+      "name": "HTML y CSS",
+      "teacher": "Prof. Méndez",
+      "hours": 25,
+      "classes": 6
+    },
+    {
+      "id": "c6",
+      "name": "Bases de Datos",
+      "teacher": "Prof. Torres",
+      "hours": 45,
+      "classes": 10
     }
   ],
   "enrollments": [
     {
       "id": "e1",
-      "student": "María Gómez",
-      "course": "Angular Básico",
-      "date": "2024-06-01"
+      "studentId": "s1",
+      "courseId": "c2",
+      "date": "1211-12-12",
+      "userId": "dev1"
     },
     {
       "id": "e2",
-      "student": "Carlos Pérez",
-      "course": "React Pro",
-      "date": "2024-06-10"
+      "studentId": "s3",
+      "courseId": "c2",
+      "date": "1212-03-12",
+      "userId": "dev1"
+    },
+    {
+      "id": "e3",
+      "studentId": "s5",
+      "courseId": "c3",
+      "date": "211211-03-12",
+      "userId": "dev1"
+    },
+    {
+      "id": "e4",
+      "studentId": "s1",
+      "courseId": "c6",
+      "date": "3333-02-12",
+      "userId": "dev1"
+    },
+    {
+      "id": "e5",
+      "studentId": "s1",
+      "courseId": "c2",
+      "date": "2111-03-12",
+      "userId": "2"
     }
   ],
-"usuarios": [
-  {
-    "id": "1",
-    "name": "Santi",
-    "email": "santi@gmail.com",
-    "password": "123456",
-    "address": "Calle falsa 123",
-    "phone": "098765432",
-    "role": "admin"
-  },
-  {
-    "id": "2",
-    "name": "Laura",
-    "email": "laura@gmail.com",
-    "password": "abcdef",
-    "address": "Av. siempre viva 742",
-    "phone": "091234567",
-    "role": "user"
-  }
-]
-
+  "usuarios": [
+    {
+      "id": "1",
+      "name": "Santi",
+      "email": "santi@gmail.com",
+      "password": "123456",
+      "address": "Calle falsa 123",
+      "phone": "098765432",
+      "role": "admin"
+    },
+    {
+      "id": "2",
+      "name": "Laura",
+      "email": "laura@gmail.com",
+      "password": "abcdef",
+      "address": "Av. siempre viva 742",
+      "phone": "091234567",
+      "role": "user"
+    }
+  ]
 }

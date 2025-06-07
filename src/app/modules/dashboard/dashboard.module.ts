@@ -12,6 +12,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CoursesComponent } from './pages/courses/courses.component';
+import { MatMenuModule } from '@angular/material/menu';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { CoursesComponent } from './pages/courses/courses.component';
     ToolbarComponent,
   ],
   imports: [
+    MatMenuModule,
     CommonModule,
     DashboardRoutingModule,
     MatSidenavModule,

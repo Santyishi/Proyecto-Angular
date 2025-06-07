@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { EnrollmentsService, Enrollment } from './enrollments.service';
+import { EnrollmentsService } from './enrollments.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { StudentsService, Student } from '../students/students.service';
+import { CoursesService } from '../courses/courses.service';
+import { Course } from '../courses/courses.model';
+import { Enrollment } from './enrollments.model';
+import { forkJoin, of } from 'rxjs';
 
 @Component({
   selector: 'app-enrollments',
@@ -12,28 +17,54 @@ import { AuthService } from '../../../../core/services/auth.service';
 export class EnrollmentsComponent implements OnInit {
   enrollmentForm: FormGroup;
   displayedColumns: string[] = ['id', 'student', 'course', 'date', 'actions'];
-  enrollmentsList: Enrollment[] = [];
+  enrollmentsList: any[] = [];
+  studentsList: Student[] = [];
+  coursesList: Course[] = [];
   IdEnrollmentEdit?: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private enrollmentsService: EnrollmentsService,
+    private studentsService: StudentsService,
+    private coursesService: CoursesService,
     private auth: AuthService
   ) {
     this.enrollmentForm = this.fb.group({
-      student: [null, Validators.required],
-      course: [null, Validators.required],
-      date: [null, Validators.required]
+      studentId: [null, Validators.required],
+      courseId: [null, Validators.required],
+      date: [null, Validators.required],
+      userId: [this.auth.getUser()?.id || '', Validators.required]
     });
   }
 
   ngOnInit(): void {
-    this.loadEnrollments();
+    this.loadInitialData();
   }
 
-  loadEnrollments(): void {
-    this.enrollmentsService.getEnrollments().subscribe(data => {
-      this.enrollmentsList = data;
+  loadInitialData(): void {
+    forkJoin([
+      this.studentsService.getStudents(),
+      this.coursesService.getCourses(),
+      this.enrollmentsService.getEnrollments()
+    ]).subscribe(([students, courses, enrollments]) => {
+      this.studentsList = students;
+      this.coursesList = courses;
+
+      const requests = enrollments.map(e =>
+        forkJoin({
+          student: this.studentsService.getStudentById(e.studentId),
+          course: this.coursesService.getCourseById(e.courseId),
+          enrollment: of(e)
+        })
+      );
+
+      forkJoin(requests).subscribe(results => {
+        this.enrollmentsList = results.map(r => ({
+          ...r.enrollment,
+          studentName: `${r.student.name} ${r.student.lastName}`,
+          courseName: r.course.name
+        }));
+      });
     });
   }
 
@@ -51,18 +82,18 @@ export class EnrollmentsComponent implements OnInit {
         ...formValue
       };
       this.enrollmentsService.updateEnrollment(updated).subscribe(() => {
-        this.loadEnrollments();
         this.IdEnrollmentEdit = null;
         this.resetForm();
+        this.loadInitialData();
       });
     } else {
       const newEnrollment: Enrollment = {
-        id: this.generateSequentialEnrollmentId(),
+        id: this.generateSequentialId(),
         ...formValue
       };
       this.enrollmentsService.addEnrollment(newEnrollment).subscribe(() => {
-        this.loadEnrollments();
         this.resetForm();
+        this.loadInitialData();
       });
     }
   }
@@ -70,7 +101,7 @@ export class EnrollmentsComponent implements OnInit {
   onDelete(id: string): void {
     if (confirm("¿Seguro que deseas eliminar la inscripción?")) {
       this.enrollmentsService.deleteEnrollment(id).subscribe(() => {
-        this.loadEnrollments();
+        this.loadInitialData();
       });
     }
   }
@@ -80,20 +111,28 @@ export class EnrollmentsComponent implements OnInit {
 
     this.IdEnrollmentEdit = enrollment.id;
     this.enrollmentForm.patchValue({
-      student: enrollment.student,
-      course: enrollment.course,
+      studentId: enrollment.studentId,
+      courseId: enrollment.courseId,
       date: enrollment.date,
+      userId: enrollment.userId
     });
   }
 
   resetForm(): void {
-    this.enrollmentForm.reset();
-    this.enrollmentForm.markAsPristine();
-    this.enrollmentForm.markAsUntouched();
+    this.enrollmentForm.reset({
+      studentId: null,
+      courseId: null,
+      date: null,
+      userId: this.auth.getUser()?.id || ''
+    });
     this.IdEnrollmentEdit = null;
   }
 
-  generateSequentialEnrollmentId(): string {
+  isAdmin(): boolean {
+    return this.auth.getRole() === 'admin';
+  }
+
+  generateSequentialId(): string {
     const existingIds = this.enrollmentsList
       .map(e => e.id)
       .filter(id => /^[a-z]+[0-9]+$/i.test(id));
@@ -146,10 +185,6 @@ export class EnrollmentsComponent implements OnInit {
       }
     }
 
-    return 'a' + chars.join('');
-  }
-
-  isAdmin(): boolean {
-    return this.auth.getRole() === 'admin';
+    return 'e' + chars.join('');
   }
 }

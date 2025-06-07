@@ -1,16 +1,22 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CoursesComponent } from './courses.component';
-import { CoursesRoutingModule } from './courses-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+import { CoursesRoutingModule } from './courses-routing.module';
+import { CourseStudentsDialogComponent } from './course-students-dialog/course-students-dialog.component';
+import { HelpersModule } from '../../../../Shared/helpers.module';
 
 @NgModule({
-  declarations: [CoursesComponent],
+  declarations: [
+    CoursesComponent,
+    CourseStudentsDialogComponent
+  ],
   imports: [
     CommonModule,
     CoursesRoutingModule,
@@ -18,8 +24,10 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatIconModule,
+    MatDialogModule,
     MatTableModule,
-    MatIconModule
+    HelpersModule
   ]
 })
 export class CoursesModule {}

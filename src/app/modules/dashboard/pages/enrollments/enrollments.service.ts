@@ -1,13 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface Enrollment {
-  id: string;
-  student: string;
-  course: string;
-  date: string;
-}
+import { Enrollment } from './enrollments.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,4 +26,11 @@ export class EnrollmentsService {
   deleteEnrollment(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+  getEnrollmentsByStudentId(studentId: string): Observable<Enrollment[]> {
+  return this.http.get<Enrollment[]>(`${this.apiUrl}?studentId=${studentId}`);
+  }
+  getEnrollmentsByCourseId(courseId: string): Observable<Enrollment[]> {
+  return this.http.get<Enrollment[]>(`${this.apiUrl}?courseId=${courseId}`);
+  }
+
 }

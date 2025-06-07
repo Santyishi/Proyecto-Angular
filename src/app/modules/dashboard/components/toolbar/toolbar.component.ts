@@ -5,6 +5,8 @@ import { Usuario } from '../../../../core/services/auth.service';
 import { selectUser } from '../../../../state/auth/auth.selectors';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
+import { logout } from '../../../../state/auth/auth.actions';
+
 
 @Component({
   selector: 'app-toolbar',
@@ -17,9 +19,12 @@ export class ToolbarComponent {
   user$: Observable<Usuario | null>;
   currentTitle: string = '';
 
-  constructor(private store: Store, private router: Router, private route: ActivatedRoute) {
+  constructor(
+    private store: Store,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.user$ = this.store.select(selectUser);
-    this.user$.subscribe(user => console.log('Toolbar user:', user));
 
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
@@ -33,5 +38,10 @@ export class ToolbarComponent {
     ).subscribe(title => {
       this.currentTitle = title;
     });
+  }
+
+  logout(): void {
+    this.store.dispatch(logout());
+    this.router.navigate(['/login']);
   }
 }

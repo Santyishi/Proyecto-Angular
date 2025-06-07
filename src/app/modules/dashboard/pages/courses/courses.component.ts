@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CoursesService, Course } from './courses.service';
+import { CoursesService } from './courses.service';
 import { MatDialog } from '@angular/material/dialog';
+import { Course } from './courses.model';
 import { AuthService } from '../../../../core/services/auth.service';
+import { CourseStudentsDialogComponent } from './course-students-dialog/course-students-dialog.component';
 
 @Component({
   selector: 'app-courses',
@@ -12,7 +14,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 })
 export class CoursesComponent implements OnInit {
   courseForm: FormGroup;
-  displayedColumns: string[] = ['id', 'title', 'description', 'actions'];
+  displayedColumns: string[] = ['id', 'name', 'teacher', 'actions'];
   coursesList: Course[] = [];
   IdCourseEdit?: string | null = null;
 
@@ -23,8 +25,8 @@ export class CoursesComponent implements OnInit {
     private auth: AuthService
   ) {
     this.courseForm = this.fb.group({
-      title: [null, Validators.required],
-      description: [null, Validators.required],
+      name: [null, Validators.required],
+      teacher: [null, Validators.required],
     });
   }
 
@@ -51,7 +53,9 @@ export class CoursesComponent implements OnInit {
     if (this.IdCourseEdit) {
       const updated: Course = {
         id: this.IdCourseEdit,
-        ...formValue
+        ...formValue,
+        hours: 0,
+        classes: 0
       };
       this.coursesService.updateCourse(updated).subscribe(() => {
         this.loadCourses();
@@ -63,7 +67,9 @@ export class CoursesComponent implements OnInit {
     } else {
       const newCourse: Course = {
         id: this.generateSequentialId(),
-        ...formValue
+        ...formValue,
+        hours: 0,
+        classes: 0
       };
       this.coursesService.addCourse(newCourse).subscribe(() => {
         this.loadCourses();
@@ -87,8 +93,14 @@ export class CoursesComponent implements OnInit {
     if (!this.isAdmin()) return;
     this.IdCourseEdit = course.id;
     this.courseForm.patchValue({
-      title: course.title,
-      description: course.description,
+      name: course.name,
+      teacher: course.teacher,
+    });
+  }
+
+  openStudents(courseId: string): void {
+    this.matDialog.open(CourseStudentsDialogComponent, {
+      data: courseId
     });
   }
 

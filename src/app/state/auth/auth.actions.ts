@@ -5,5 +5,4 @@ export const setUser = createAction(
   '[Auth] Set User',
   props<{ user: Usuario }>()
 );
-
-export const logoutUser = createAction('[Auth] Logout User');
+export const logout = createAction('[Auth] Logout');

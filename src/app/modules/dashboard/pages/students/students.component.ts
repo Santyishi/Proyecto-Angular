@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Student, StudentsService } from './students.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../../../core/services/auth.service';
+import { StudentCoursesDialogComponent } from './student-courses-dialog/student-courses-dialog.component';
 
 @Component({
   selector: 'app-students',
@@ -64,7 +65,7 @@ export class StudentsComponent implements OnInit {
       });
     } else {
       const newStudent: Student = {
-        id: crypto.randomUUID(),
+        id: this.generateSequentialId(),
         ...formValue
       };
 
@@ -73,6 +74,62 @@ export class StudentsComponent implements OnInit {
         this.resetForm();
       });
     }
+  }
+
+  generateSequentialId(): string {
+    const existingIds = this.studentsList
+      .map(s => s.id)
+      .filter(id => /^[a-z]+[0-9]+$/i.test(id));
+
+    const getLastIdParts = (id: string) => {
+      const match = id.match(/^([a-z]+)(\d+)$/i);
+      if (!match) return { prefix: 's', number: 0 };
+      return {
+        prefix: match[1],
+        number: parseInt(match[2], 10)
+      };
+    };
+
+    let maxPrefix = 's';
+    let maxNumber = 0;
+
+    existingIds.forEach(id => {
+      const { prefix, number } = getLastIdParts(id);
+      if (
+        prefix.length > maxPrefix.length ||
+        (prefix.length === maxPrefix.length && prefix > maxPrefix) ||
+        (prefix === maxPrefix && number > maxNumber)
+      ) {
+        maxPrefix = prefix;
+        maxNumber = number;
+      }
+    });
+
+    if (maxNumber >= 10) {
+      maxPrefix = this.nextPrefix(maxPrefix);
+      maxNumber = 1;
+    } else {
+      maxNumber += 1;
+    }
+
+    return `${maxPrefix}${maxNumber}`;
+  }
+
+  nextPrefix(prefix: string): string {
+    const chars = prefix.split('');
+    let i = chars.length - 1;
+
+    while (i >= 0) {
+      if (chars[i] !== 'z') {
+        chars[i] = String.fromCharCode(chars[i].charCodeAt(0) + 1);
+        return chars.join('');
+      } else {
+        chars[i] = 'a';
+        i--;
+      }
+    }
+
+    return 's' + chars.join('');
   }
 
   onDelete(id: string): void {
@@ -112,9 +169,17 @@ export class StudentsComponent implements OnInit {
       control.markAsPristine();
       control.markAsUntouched();
     });
+
+    this.IdStudentEdit = null;
   }
 
   isAdmin(): boolean {
     return this.auth.getRole() === 'admin';
+  }
+
+  openCourses(studentId: string): void {
+    this.matDialog.open(StudentCoursesDialogComponent, {
+      data: studentId
+    });
   }
 }

@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>Alumnos inscriptos</h1>
+
+<div mat-dialog-content style="max-height: 300px; overflow-y: auto; padding: 8px;">
+  <ul *ngIf="students.length > 0; else noStudents">
+    <li *ngFor="let student of students" style="margin-bottom: 8px; font-size: 16px;">
+      {{ student.name }} {{ student.lastName }} ({{ student.email }})
+    </li>
+  </ul>
+  <ng-template #noStudents>
+    <p>No hay alumnos inscriptos en este curso.</p>
+  </ng-template>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cerrar</button>
+</div>

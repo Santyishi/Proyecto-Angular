@@ -40,3 +40,28 @@
   color: #aa94d2;
   letter-spacing: 0.5px;
 }
+
+
+.user-info {
+  margin-right: 12px;
+
+  .user-button {
+    color: #9575cd;
+    font-weight: bold;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+  }
+
+  .user-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+
+  mat-icon {
+    color: #9575cd;
+  }
+}

@@ -34,4 +34,8 @@ export class StudentsService {
   deleteStudent(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+  getStudentById(id: string): Observable<Student> {
+    return this.http.get<Student>(`${this.baseUrl}/${id}`);
+  }
 }
