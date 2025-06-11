@@ -79,20 +79,6 @@
   ],
   "enrollments": [
     {
-      "id": "e1",
-      "studentId": "s1",
-      "courseId": "c2",
-      "date": "1211-12-12",
-      "userId": "dev1"
-    },
-    {
-      "id": "e2",
-      "studentId": "s3",
-      "courseId": "c2",
-      "date": "1212-03-12",
-      "userId": "dev1"
-    },
-    {
       "id": "e3",
       "studentId": "s5",
       "courseId": "c3",

@@ -30,7 +30,13 @@ const routes: Routes = [
         canActivate: [RoleGuard(['admin', 'user'])],
         loadChildren: () =>
           import('./pages/enrollments/enrollments.module').then(m => m.EnrollmentsModule)
+      },
+      {
+        path: 'users',
+        canActivate: [RoleGuard(['admin'])],
+        loadChildren: () => import('./pages/users/users.module').then(m => m.UsersModule)
       }
+
     ]
   }
 ];

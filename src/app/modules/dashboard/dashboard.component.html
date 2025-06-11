@@ -3,6 +3,7 @@
     <p>Menú</p>
 
     <ng-container *ngIf="isAdmin()">
+      <button mat-button routerLink="/dashboard/users">Usuarios</button>
       <button mat-button routerLink="/dashboard/students">Estudiantes</button>
     </ng-container>
 
