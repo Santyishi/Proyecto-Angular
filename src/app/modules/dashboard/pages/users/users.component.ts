@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { User } from './users.model';
-import { UsersService } from './users.services';
+import { Usuario } from '../../../../core/services/auth.service';
+import { UsersService } from './users.service';
 
 @Component({
   selector: 'app-users',
@@ -10,18 +10,19 @@ import { UsersService } from './users.services';
   standalone: false
 })
 export class UsersComponent implements OnInit {
-  usersList: User[] = [];
   userForm: FormGroup;
-  editingUserId: string | null = null;
-  displayedColumns = ['id', 'name', 'email', 'role', 'actions'];
+  usersList: Usuario[] = [];
+  displayedColumns: string[] = ['id', 'name', 'email', 'role', 'actions'];
+  editUserId: string | null = null;
 
-  constructor(private fb: FormBuilder, private usersService: UsersService) {
+  constructor(
+    private fb: FormBuilder,
+    private usersService: UsersService
+  ) {
     this.userForm = this.fb.group({
       name: [null, Validators.required],
       email: [null, [Validators.required, Validators.email]],
       password: [null, Validators.required],
-      address: [null],
-      phone: [null],
       role: ['user', Validators.required]
     });
   }
@@ -37,39 +38,67 @@ export class UsersComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.userForm.invalid) return;
+    if (this.userForm.invalid) {
+      this.userForm.markAllAsTouched();
+      return;
+    }
 
-    const user: User = {
-      id: this.editingUserId ?? '',
-      ...this.userForm.value
-    };
+    const formValue = this.userForm.value;
 
-    if (this.editingUserId) {
-      this.usersService.updateUser(user).subscribe(() => {
+    if (this.editUserId) {
+      const updated: Usuario = {
+        id: this.editUserId,
+        ...formValue
+      };
+      this.usersService.updateUser(updated).subscribe(() => {
         this.loadUsers();
         this.resetForm();
       });
     } else {
-      this.usersService.addUser(user).subscribe(() => {
+      const newUser: Usuario = {
+        id: this.generateSequentialId(),
+        ...formValue
+      };
+      this.usersService.addUser(newUser).subscribe(() => {
         this.loadUsers();
         this.resetForm();
       });
     }
   }
 
-  onEdit(user: User): void {
-    this.editingUserId = user.id;
-    this.userForm.patchValue(user);
+  onEdit(user: Usuario): void {
+    this.editUserId = user.id;
+    this.userForm.patchValue({
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      role: user.role
+    });
   }
 
   onDelete(id: string): void {
-    if (confirm('¿Eliminar este usuario?')) {
-      this.usersService.deleteUser(id).subscribe(() => this.loadUsers());
+    if (confirm('¿Seguro que deseas eliminar este usuario?')) {
+      this.usersService.deleteUser(id).subscribe(() => {
+        this.loadUsers();
+      });
     }
   }
 
   resetForm(): void {
-    this.editingUserId = null;
-    this.userForm.reset({ role: 'user' });
+    this.userForm.reset({
+      name: null,
+      email: null,
+      password: null,
+      role: 'user'
+    });
+    this.editUserId = null;
+  }
+
+  generateSequentialId(): string {
+    const numericIds = this.usersList
+      .map(u => parseInt(u.id, 10))
+      .filter(id => !isNaN(id));
+    const maxId = numericIds.length > 0 ? Math.max(...numericIds) : 0;
+    return (maxId + 1).toString();
   }
 }

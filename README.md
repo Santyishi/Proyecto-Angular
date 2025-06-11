@@ -1,48 +1,65 @@
-# Proyecto Angular - Gestión de Cursos
+# 📚 Proyecto Angular - Gestión de Cursos
 
 Este proyecto fue desarrollado como parte de la **entrega final del curso de Angular en Coderhouse**.  
-La aplicación permite gestionar **alumnos, cursos, inscripciones y usuarios** mediante componentes modulares, utilizando Angular CLI, Angular Material, json-server y Formularios Reactivos.
+La aplicación permite gestionar **alumnos, cursos, inscripciones y usuarios** mediante componentes modulares, autenticación por roles y manejo de estado global con NgRx.
 
 ---
 
 ## ✅ Funcionalidades Principales
 
-### 🎓 Gestión de Alumnos, Cursos, Inscripciones y Usuarios
+### 🎓 Gestión de Entidades
 - Altas, bajas y modificaciones usando formularios reactivos.
-- Visualización mediante tablas dinámicas de Angular Material.
-- Restricciones por rol: Admin vs. Usuario.
-- Generación automática de IDs secuenciales tipo Excel.
-- Conexión a una API REST simulada con json-server.
-
-### 🧭 Interfaz de Usuario
-- Navbar lateral y Toolbar superior para navegación fluida.
-- Estilizado limpio, responsive y accesible con Angular Material.
-- Rutas con Lazy Loading y rutas hijas por sección.
+- Visualización de Alumnos, Cursos, Inscripciones y Usuarios en tablas.
+- Acciones con restricción por rol (modificar/eliminar solo para administradores).
+- Generación automática de IDs secuenciales tipo Excel para cursos e inscripciones.
+- Vista de detalle para cada alumno y curso con opción de desinscripción.
+- Conexión a API REST simulada con json-server o mockapi.io.
 
 ### 🔐 Autenticación y Autorización
-- Inicio de sesión con autenticación por rol.
-- Guards para proteger rutas según el perfil del usuario.
+- Inicio de sesión con credenciales y perfil (administrador o usuario).
+- Guards que restringen el acceso a rutas según el rol.
+- Logout funcional con redirección al login.
 
-### 🧱 Estructuración del Código
-- Modularización en `core`, `shared` y `features`.
-- Servicios que devuelven observables desde API REST simulada.
-- Separación clara de responsabilidades por Feature Module.
+### 🧭 Interfaz de Usuario
+- Navbar lateral dinámico según perfil.
+- Toolbar superior con:
+  - Nombre de la aplicación.
+  - Título dinámico por ruta.
+  - Usuario logueado.
+- Diseño responsive y accesible con Angular Material.
 
-### 🧪 Pruebas Unitarias
-- Servicios y componentes con pruebas unitarias (Ej: StudentsService, CoursesComponent).
+### 🧱 Arquitectura del Código
+- Modularización completa: `core`, `shared`, `features`.
+- Servicios que devuelven observables conectados a API externa.
+- Lazy Loading y rutas hijas en cada módulo.
+- Separación clara de responsabilidades por módulo funcional.
+
+### 🧠 Manejo de Estado con NgRx
+- Store global (`app store`) para:
+  - Usuario logueado.
+  - Título actual de la ruta.
+- Feature stores individuales (`auth`, `students`, `courses`, `users`, etc).
+- Implementación de:
+  - Acciones (`actions`)
+  - Reducers (`reducers`)
+  - Selectores (`selectors`)
+  - Efectos (`effects`) para comunicación con servicios.
+- Estado reactivo y centralizado en toda la aplicación.
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+## 🛠️ Tecnologías Utilizadas
 
 - Angular CLI
 - Angular Material
-- Angular Routing con Lazy Loading
-- Reactive Forms
+- NgRx (Store, Effects, Reducers, Selectors)
 - TypeScript
-- HTML5 / SCSS
+- RxJS
+- Reactive Forms
 - json-server
 - Jasmine / Karma
+- Bootstrap (desde angular.json)
+- HTML5 / SCSS
 
 ---
 
@@ -51,18 +68,22 @@ La aplicación permite gestionar **alumnos, cursos, inscripciones y usuarios** m
 ```
 src/
 ├── app/
-│   ├── core/               # Servicios de autenticación y guards
-│   ├── shared/             # Pipes, directivas, componentes comunes
-│   ├── features/           # Módulos funcionales
-│   │   ├── students/
-│   │   ├── courses/
-│   │   ├── enrollments/
-│   │   └── users/
+│   ├── core/               # Servicios, guards, lógica global
+│   ├── shared/             # Pipes, directivas, componentes reutilizables
+│   ├── state/              # NgRx app store (auth, title, etc.)
+│   ├── modules/
+│   │   ├── auth/           # Login y autenticación
+│   │   └── dashboard/
+│   │       └── pages/
+│   │           ├── students/
+│   │           ├── courses/
+│   │           ├── enrollments/
+│   │           └── users/
 │   ├── app-routing.module.ts
 │   └── app.component.*
 ├── assets/
 ├── environments/
-db.json                      # API REST simulada con json-server
+db.json                      # Simulación de backend con json-server
 ```
 
 ---
@@ -88,7 +109,7 @@ npm install
 ng serve
 ```
 
-Acceder desde: [http://localhost:4200](http://localhost:4200)
+Abrir en: [http://localhost:4200](http://localhost:4200)
 
 ### 4. Ejecutar json-server
 
@@ -96,19 +117,7 @@ Acceder desde: [http://localhost:4200](http://localhost:4200)
 npx json-server --watch db.json
 ```
 
-Acceder a la API REST simulada desde: [http://localhost:3000](http://localhost:3000)
-
----
-
-## 🏁 Versión de Producción (`dist/`)
-
-La carpeta `dist/` fue generada utilizando el comando:
-
-```bash
-ng build --configuration production
-```
-
-> ⚠️ Debido a que `dist/` está ignorado por defecto en `.gitignore`, se forzó su agregado manual al repositorio para cumplir con los requisitos de entrega.
+API simulada: [http://localhost:3000](http://localhost:3000)
 
 ---
 
@@ -120,22 +129,37 @@ Ejecutar los tests con:
 ng test
 ```
 
-Resultados esperados: todos los tests deben pasar (StudentsService, CoursesComponent, etc).
+Resultados esperados: deben ejecutarse correctamente los tests de servicios y componentes clave como `StudentsService`, `CoursesComponent`, etc.
+
+---
+
+## 🏁 Versión de Producción (`dist/`)
+
+El proyecto fue compilado para producción con:
+
+```bash
+ng build --configuration production
+```
+
+> ⚠️ La carpeta `dist/` fue incluida manualmente en el repositorio debido a los requerimientos de entrega, ya que normalmente está en `.gitignore`.
 
 ---
 
 ## 📌 Estado del Proyecto
 
 ✔️ Cumple con todos los requisitos funcionales y técnicos.  
-✔️ Modularización completa.  
-✔️ json-server integrado.  
-✔️ Guards, roles y autenticación.  
-✔️ Pruebas unitarias funcionales.  
+✔️ Arquitectura limpia, modular, escalable.  
+✔️ NgRx implementado de forma completa.
+✔️ API externa simulada correctamente integrada.  
+✔️ Autenticación, guards, roles y navegación funcional.  
+✔️ Pruebas unitarias disponibles.  
 ✔️ Documentación incluida.  
 ✔️ Carpeta `dist/` agregada para revisión.
 
 ---
 
-## 🧑‍💻 Autor
+## 👨‍💻 Autor
 
-Proyecto realizado por **Santyishi** como entrega final del curso de Angular en Coderhouse.
+**Santyishi**  
+Proyecto realizado como entrega final del curso de Angular en Coderhouse.  
+[GitHub](https://github.com/Santyishi)
